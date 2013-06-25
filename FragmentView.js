@@ -10,7 +10,7 @@
  * @author Nicholas Funnell <nick@nick.gs>
  * @since 2013-06-21
  */
-Marionette.FragmentView = Marionette.ItemView.extend({
+Backbone.Marionette.FragmentView = Marionette.ItemView.extend({
 	initialize: function(options) {
 		this.frag = document.createDocumentFragment();
 		console.warn('options:', options);
