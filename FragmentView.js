@@ -7,7 +7,7 @@
  * 'ready' event, then the View will insert the contents of its DocumentFragment all at once.
  * This should save the many DOM manipulations that normally come from using a CollectionView
  *
- * @author Nicholas Funnell <nickf@daivsnet.com>
+ * @author Nicholas Funnell <nick@nick.gs>
  * @since 2013-06-21
  */
 Marionette.FragmentView = Marionette.ItemView.extend({
