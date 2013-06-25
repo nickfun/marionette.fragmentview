@@ -87,6 +87,5 @@ Backbone.Marionette.FragmentView = Marionette.ItemView.extend({
 		this.collection.each(function(model) {
 			this.modelAdded(model);
 		}, this);
-	},
-	updateRows: Marionette.CollectionView.prototype.updateRows
+	}
 });
