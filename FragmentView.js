@@ -72,6 +72,10 @@ Backbone.Marionette.FragmentView = Marionette.ItemView.extend({
 	renderChildren: function() {
 		this.collection.each(function(model) {
 			var oView = this.findViewByModel(model);
+		    if( !oView ) {
+			console.warn('cant find view');
+			return;
+		    }
 			oView.render();
 			this.frag.appendChild( oView.el );
 		}, this);
