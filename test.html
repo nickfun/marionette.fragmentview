@@ -3,10 +3,76 @@
 <head>
 	<meta charset="utf-8">
 	<title>Fragment View Test</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.5.1-bundled/backbone.marionette.min.js"></script>
+	<script src="./FragmentView.js"></script>
 </head>
 <body>
 	<h1>Test Page</h1>
 	<div id="normal"></div>
 	<div id="frag"></div>
+	<script>
+	/** Data */
+	function getRandomInt(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	function getRandomDate() {
+		return new Date( getRandomInt(458895600000, 1394089085507));
+	}
+	function getRandomString(len) {
+		var c="abcdefghijklmnopqrstuvwxyz0123456789";
+		var s="";
+		for( var i=0; i<len; i++ ) {
+			s += c[getRandomInt(0,c.length-1)];
+		}
+		return s;
+	}
+	function getRandomStrings() {
+		var max=200;
+		var s = "", len;
+		while( max > 0 ) {
+			len = getRandomInt(10,20);
+			s += getRandomString(len) + " ";
+			max -= len;
+		}
+		return s;
+	}
+
+	var data = new Backbone.Collection();
+	for( var i=0; i<10000; i++ ) {
+		data.add( new Backbone.Model({
+			id: _.uniqueId(),
+			date: getRandomDate(),
+			message: getRandomStrings()
+		}));
+	}
+
+	/** APP */
+	var app = new Backbone.Marionette.Application();
+	var RowView = Backbone.Marionette.ItemView.extend({
+		template: "#tpl-row"
+	});
+	var CollectionView = Backbone.Marionette.CollectionView.extend({
+
+	})
+	</script>
+	<script type="text/template" id="tpl-row">
+		<td><%- date %></td>
+		<td><%- message %></td>
+	</script>
+	<script type="text/template" id="layout">
+		<table>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Message</th>
+				</tr>
+			</thead>
+			<tbody class="_contents"></tbody>
+		</table>
+	</script>
+
 </body>
 </html>
