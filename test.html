@@ -9,16 +9,26 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.5.1-bundled/backbone.marionette.min.js"></script>
 	<script src="./FragmentView.js"></script>
 	<style>
-		#normal {
+		#normal, .normal {
 			background-color: #faf;
+			float: left;
+			width: 49%;
+			border-bottom: 2px solid black;
 		}
-		#frag {
+		#frag, .frag {
 			background-color: #ffa;
+			float: left;
+			width: 49%;
+			border-bottom: 2px solid black;
 		}
 	</style>
 </head>
 <body>
 	<h1>Test Page</h1>
+	<div>
+		<span class="normal">NORMAL COLLECTION VIEW</span>
+		<span class="frag">ADDON FRAGMENT VIEW</span>
+	</div>
 	<div id="normal"></div>
 	<div id="frag"></div>
 	<script>
@@ -26,7 +36,7 @@
 		window.app.start();
 	});
 	/** Config **/
-	DATA_SIZE = 20;
+	DATA_SIZE = 9999;
 	/** Data */
 	function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -53,14 +63,18 @@
 		return s;
 	}
 
-	var data = new Backbone.Collection();
-	for( var i=0; i<DATA_SIZE; i++ ) {
-		data.add( new Backbone.Model({
-			id: _.uniqueId(),
-			date: getRandomDate(),
-			message: getRandomStrings()
-		}));
+	function buildData() {
+		window.data = new Backbone.Collection();
+		for( var i=0; i<DATA_SIZE; i++ ) {
+			window.data.add( new Backbone.Model({
+				id: _.uniqueId(),
+				date: getRandomDate().toUTCString(),
+				message: getRandomStrings()
+			}));
+		}
 	}
+
+	window.data = false;
 
 	/** APP */
 	var app = new Backbone.Marionette.Application();
@@ -80,21 +94,42 @@
 	// module
 	app.module("ViewModule", function( module, app ) {
 		module.addInitializer(function() {
+			console.log("Ready");
+		});
+
+		function timer(msg, fn, ctx) {
+			var now,then;
+			now = new Date();
+			fn.call(ctx);
+			then = new Date();
+			console.log(msg, then.getTime() - now.getTime() );
+		}
+
+		this.exec = function() {
+			timer("build data", buildData, this);
+			timer("Fragment", doFrag, this);
+			timer("Normal", doNormal,this);
+		};
+
+		function doNormal() {
 			var CView = new MyCollectionView({
-				collection: data,
-				el: '#normal'
+				collection: window.data,
 			});
 			CView.render();
+			$("#normal").empty().append( CView.el );
+		}
+
+		function doFrag() {
 			var FView = new MyFragmentView({
-				collection: data,
-				el: '#frag'
+				collection: window.data,
 			});
 			FView.render();
-		});
+			$("#frag").empty().append( FView.el );
+		}
 	});
 	</script>
 	<script type="text/template" id="tpl-row">
-		<td><%- date %></td>
+		<td><nobr><%- date %></nobr></td>
 		<td><%- message %></td>
 	</script>
 
