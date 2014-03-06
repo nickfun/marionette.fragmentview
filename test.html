@@ -8,12 +8,25 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.5.1-bundled/backbone.marionette.min.js"></script>
 	<script src="./FragmentView.js"></script>
+	<style>
+		#normal {
+			background-color: #faf;
+		}
+		#frag {
+			background-color: #ffa;
+		}
+	</style>
 </head>
 <body>
 	<h1>Test Page</h1>
 	<div id="normal"></div>
 	<div id="frag"></div>
 	<script>
+	$(document).ready(function() {
+		window.app.start();
+	});
+	/** Config **/
+	DATA_SIZE = 20;
 	/** Data */
 	function getRandomInt(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -41,7 +54,7 @@
 	}
 
 	var data = new Backbone.Collection();
-	for( var i=0; i<10000; i++ ) {
+	for( var i=0; i<DATA_SIZE; i++ ) {
 		data.add( new Backbone.Model({
 			id: _.uniqueId(),
 			date: getRandomDate(),
@@ -52,26 +65,37 @@
 	/** APP */
 	var app = new Backbone.Marionette.Application();
 	var RowView = Backbone.Marionette.ItemView.extend({
-		template: "#tpl-row"
+		template: "#tpl-row",
+		tagName: 'tr',
+		className: 'row'
 	});
-	var CollectionView = Backbone.Marionette.CollectionView.extend({
-
-	})
+	var MyCollectionView = Backbone.Marionette.CollectionView.extend({
+		tagName: 'table',
+		itemView: RowView,
+	});
+	var MyFragmentView = Backbone.Marionette.FragmentView.extend({
+		tagName: 'table',
+		itemView: RowView
+	});
+	// module
+	app.module("ViewModule", function( module, app ) {
+		module.addInitializer(function() {
+			var CView = new MyCollectionView({
+				collection: data,
+				el: '#normal'
+			});
+			CView.render();
+			var FView = new MyFragmentView({
+				collection: data,
+				el: '#frag'
+			});
+			FView.render();
+		});
+	});
 	</script>
 	<script type="text/template" id="tpl-row">
 		<td><%- date %></td>
 		<td><%- message %></td>
-	</script>
-	<script type="text/template" id="layout">
-		<table>
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>Message</th>
-				</tr>
-			</thead>
-			<tbody class="_contents"></tbody>
-		</table>
 	</script>
 
 </body>
